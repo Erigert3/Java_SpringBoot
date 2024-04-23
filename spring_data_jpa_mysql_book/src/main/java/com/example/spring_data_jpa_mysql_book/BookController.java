@@ -1,11 +1,9 @@
 package com.example.spring_data_jpa_mysql_book;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -15,47 +13,45 @@ public class BookController {
 
 
     @Autowired
-    private BookRepository repository;
+    private BookService bookService;
+
+
+
 
     @PostMapping
-    public ResponseEntity<?> addBook(@RequestBody Book book) {
-        return new ResponseEntity<>(repository.save(book), HttpStatus.CREATED);
+    public Book addBook(@RequestBody Book book) {
+        return bookService.createBook(book);
     }
 
     @GetMapping
-    public ResponseEntity<Collection<Book>> getAllBooks() {
-        return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
+    public List<Book> getAllBooks() {
+        return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookWithId(@PathVariable Long id) {
-        return new ResponseEntity<Book>(repository.findById(id).get(), HttpStatus.OK);
+    public Optional<Book> getBookWithId(@PathVariable Long id) {
+        return bookService.getBookById(id);
     }
 
     @GetMapping(params = {"author"})
-    public ResponseEntity<Collection<Book>> findBookWithName(@RequestParam(value = "author") String author) {
-        return new ResponseEntity<>(repository.findByAuthor(author), HttpStatus.OK);
+    public List<Book> findBookByAuthor(@RequestParam(value = "author") String author) {
+        return bookService.getAllBooksByAuthor(author);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBookFromDB(@PathVariable("id") long id, @RequestBody Book book) {
+    public Book updateBookFromDB(@PathVariable("id") long id, @RequestBody Book book) {
 
-        Optional<Book> currentBookOpt = repository.findById(id);
-        Book currentBook = currentBookOpt.get();
-        currentBook.setAuthor(book.getAuthor());
-        currentBook.setTitle(book.getTitle());
-
-        return new ResponseEntity<>(repository.save(currentBook), HttpStatus.OK);
+      return bookService.updateBook(id,book);
     }
 
     @DeleteMapping("/{id}")
     public void deleteBookWithId(@PathVariable Long id) {
-        repository.deleteById(id);
+         bookService.deleteBook(id);
     }
 
     @DeleteMapping
     public void deleteAllBooks() {
-        repository.deleteAll();
+        bookService.deleteAllBooks();
     }
 }
 

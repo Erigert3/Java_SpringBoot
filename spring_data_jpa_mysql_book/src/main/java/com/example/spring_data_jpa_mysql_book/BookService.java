@@ -20,8 +20,12 @@ public class BookService {
 
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
+
     }
 
+    public List<Book> getAllBooksByAuthor(String author) {
+        return bookRepository.findByAuthor(author);
+    }
     public Optional<Book> getBookById(Long id) {
         return bookRepository.findById(id);
     }
@@ -44,5 +48,9 @@ public class BookService {
 
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
+    }
+
+    public void deleteAllBooks(){
+         bookRepository.deleteAll();
     }
 }
